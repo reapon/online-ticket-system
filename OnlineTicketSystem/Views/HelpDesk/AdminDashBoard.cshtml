@@ -1,0 +1,220 @@
+﻿@model IEnumerable<OnlineTicketSystem.Models.Ticket>
+
+@{
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+}
+
+
+<div class="row justify-content-center">
+    <div class="col-xl-3 col-md-6">
+        <div class="card bg-primary text-white mb-4">
+            <div class="card-body">All Tickets</div>
+            <div class="card-footer bg-white d-flex align-items-center justify-content-between">
+                <h4 class="huge text-black stretched-link">@Model.Count()</h4>
+                <div class="small text-black"><i class="fas fa-angle-right"></i></div>
+            </div>
+        </div>
+    </div>
+    <div class="col-xl-3 col-md-6">
+        <div class="card bg-warning text-white mb-4">
+            <div class="card-body">Open Ticket</div>
+            <div class="card-footer bg-white d-flex align-items-center justify-content-between">
+                <h4 class="huge text-black stretched-link">@Model.Where(x => x.Status.StatusName == "Open").Count()</h4>
+
+                <div class="small text-black"><i class="fas fa-angle-right"></i></div>
+            </div>
+        </div>
+    </div>
+    <div class="col-xl-3 col-md-6">
+        <div class="card bg-success text-white mb-4">
+            <div class="card-body">Closed Ticket</div>
+            <div class="card-footer bg-white d-flex align-items-center justify-content-between">
+                <h4 class="huge text-black stretched-link">@Model.Where(x => x.Status.StatusName == "Closed").Count()</h4>
+
+
+                <div class="small text-black"><i class="fas fa-angle-right"></i></div>
+            </div>
+        </div>
+    </div>
+
+
+    <div class="col-xl-3 col-md-6">
+        <div class="card bg-secondary text-white mb-4">
+            <div class="card-body">Re-Opened Ticket</div>
+            <div class="card-footer bg-white d-flex align-items-center justify-content-between">
+                <h4 class="huge text-black stretched-link">@Model.Where(x => x.Status.StatusName == "Re-Opened").Count()</h4>
+
+                <div class="small text-black"><i class="fas fa-angle-right"></i></div>
+            </div>
+        </div>
+    </div>
+    <div class="col-xl-3 col-md-6">
+        <div class="card bg-dark text-white mb-4">
+            <div class="card-body">Pending Ticket</div>
+            <div class="card-footer bg-white d-flex align-items-center justify-content-between">
+                <h4 class="huge text-black stretched-link">@Model.Where(x => x.Status.StatusName == "Pending").Count()</h4>
+
+
+                <div class="small text-black"><i class="fas fa-angle-right"></i></div>
+            </div>
+        </div>
+    </div>
+
+
+
+
+    <div class="col-xl-3 col-md-6">
+        <div class="card bg-danger text-white mb-4">
+            <div class="card-body">Tickets Created Today</div>
+            <div class="card-footer bg-white d-flex align-items-center justify-content-between">
+                <h4 class="huge text-black stretched-link">@Model.Where(x => x.CreatedTime.Date == DateTime.Today.Date).Count()</h4>
+
+                <div class="small text-black"><i class="fas fa-angle-right"></i></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@*<div class="row text-center justify-content-between">
+   
+
+    <h6 class="bg-dark text-white py-2">See ticket status Daily, Monthly and Yearly...</h6>
+
+    <div class="form-group">
+        <input id="btnTodayTicket" type="radio" name="ticketType" value="todayTicket" /> Today Ticket Status
+        <input id="btnMonthTicket" type="radio" name="ticketType" value="monthTicket" /> Month Ticket Status
+        <input id="btnYearTicket" type="radio" name="ticketType" value="yearTicket" /> Year Ticket Status
+    </div>
+
+    <div id="ticketchart"></div>
+
+</div>
+
+
+<div class="row text-center justify-content-center">
+    <h6 class="bg-dark text-white py-2">See Support Agent status Daily, Monthly and Yearly...</h6>
+
+    <div>
+        <select class="form-control" id="groupSelect" asp-items="@ViewBag.User">
+            <option value="0">--Select Support Agent--</option>
+        </select>
+
+
+        <div class="form-group">
+            <input id="btnTodaySupport" type="radio" name="SupportType" value="todaySupport" /> Support Given By Agent Today
+            <input id="btnMonthSupport" type="radio" name="SupportType" value="monthSupport" /> Support Given By Agent In This Month
+            <input id="btnYearSupport" type="radio" name="SupportType" value="yearSupport" /> Support Given By Agent In This Year
+        </div>
+
+
+        <div id="supportchart">
+
+        </div>
+    </div>
+    
+</div>*@
+
+
+@*@section Scripts
+{
+    <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+
+    <script type="text/javascript">
+
+        $(document).ready(function () {
+
+            $("#btnTodayTicket").click(function () {
+                google.charts.load('current', { 'packages': ['corechart'] });
+                google.charts.setOnLoadCallback(drawChart);
+                function drawChart() {
+                    var jsonData = $.ajax({
+                        url: '@Url.Action("TodayTicketStatusChartData", "HelpDesk")',
+                        dataType: "json",
+                        async: false
+                    }).responseText;
+                    var data = new google.visualization.DataTable(jsonData);
+                    var options = {
+                        'title': 'Daily Ticket Status',
+                        'width': 600,
+                        'height': 500
+                    };
+
+                    var chart = new google.visualization.PieChart(document.getElementById('ticketchart'));
+                    chart.draw(data, options);
+                }
+            })
+
+
+            $("#btnMonthTicket").click(function () {
+                google.charts.load('current', { 'packages': ['corechart'] });
+                google.charts.setOnLoadCallback(drawChart);
+                function drawChart() {
+                    var jsonData = $.ajax({
+                        url: '@Url.Action("MonthTicketStatusChartData", "HelpDesk")',
+                        dataType: "json",
+                        async: false
+                    }).responseText;
+                    var data = new google.visualization.DataTable(jsonData);
+                    var options = {
+                        'title': 'Monthly Ticket Status',
+                        'width': 600,
+                        'height': 500
+                    };
+
+                    var chart = new google.visualization.PieChart(document.getElementById('ticketchart'));
+                    chart.draw(data, options);
+                }
+            })
+
+            $("#btnYearTicket").click(function () {
+                google.charts.load('current', { 'packages': ['corechart'] });
+                google.charts.setOnLoadCallback(drawChart);
+                function drawChart() {
+                    var jsonData = $.ajax({
+                        url: '@Url.Action("YearlyTicketStatusChartData", "HelpDesk")',
+                        dataType: "json",
+                        async: false
+                    }).responseText;
+                    var data = new google.visualization.DataTable(jsonData);
+                    var options = {
+                        'title': 'Yearly Ticket Status',
+                        'width': 600,
+                        'height': 500
+                    };
+
+                    var chart = new google.visualization.PieChart(document.getElementById('ticketchart'));
+                    chart.draw(data, options);
+                }
+            })
+
+
+
+            $("#btnTodaySupport").click(function () {
+                var selectedUser = $("#groupSelect option:selected").val();
+
+                google.charts.load('current', { 'packages': ['corechart'] });
+                google.charts.setOnLoadCallback(drawChart);
+                function drawChart() {
+                    var jsonData = $.ajax({
+                        url: "/HelpDesk/TodaySupportCountByAgent?supportAgent=" + selectedUser,
+                        dataType: "json",
+                        async: false
+                    }).responseText;
+                    var data = new google.visualization.DataTable(jsonData);
+                    var options = {
+                        'title': 'Support Agent Daily Report..',
+                        'width': 600,
+                        'height': 500,
+                        'pointSize': 5,
+                    };
+
+                    var chart = new google.visualization.LineChart(document.getElementById('supportchart'));
+                    chart.draw(data, options);
+                }
+
+
+            });
+
+        });
+    </script>
+}*@

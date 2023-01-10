@@ -1,0 +1,53 @@
+﻿@*@model OnlineTicketSystem.Models.GroupUser
+
+<form>
+    <div class="form-group">
+        <label asp-for="GroupID" class="control-label"></label>
+        <select id="groupSelect" asp-for="GroupID" class="form-control" asp-items="ViewBag.GroupID"></select>
+        <button class="btn">Click</button>
+    </div>
+</form>*@
+
+<div class="form-group">
+    <select id="groupSelect" asp-items="@ViewBag.GroupID">
+    </select>
+    <button class="btn">Click</button>
+</div>
+
+
+
+@section Scripts{
+
+    <script>
+
+        $(document).ready(function () {
+            $("#groupSelect").change(function () {
+                var selectedGroupId = $("#groupSelect option:selected").val();
+                console.log(selectedGroupId);
+                $(".btn").click(function () {
+                    alert(selectedGroupId);
+
+                     $.ajax({
+                        url: '@Url.Action("AssignSupporter", "HelpDesk")',
+                        method: "POST",
+                        dataType: "json",
+                        data: {
+                            groupId: selectedGroupId,
+                            user: @ViewBag.Support,
+                        },
+                        success: function (data) {
+                            location.reload(true);
+                            console.log(data);
+                        },
+                        error: function (err) {
+                            console.log(err);
+                        }
+                    })
+
+                })
+
+            })
+
+        })
+    </script>
+}

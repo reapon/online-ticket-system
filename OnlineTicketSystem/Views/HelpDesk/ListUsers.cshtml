@@ -1,0 +1,22 @@
+﻿@model List<IdentityUser> 
+
+    <table class="table table-bordered table-striped">
+        <thead>
+            <tr>
+                <th>UserName</th>
+                <th>Assign Group</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td>@item.UserName</td>
+                    <td>
+                        <a asp-action="AssignSupporterToGroup" asp-controller="HelpDesk" asp-route-user="@item.UserName">Assign Group</a>
+                    </td>
+                </tr>
+
+            }
+        </tbody>
+    </table>

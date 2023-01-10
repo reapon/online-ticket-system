@@ -1,0 +1,68 @@
+﻿@model IEnumerable<OnlineTicketSystem.Models.GroupUser>
+
+@{
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+}
+
+
+
+@if (Model.Any())
+{
+    <h5 class="text-center mt-4">Assign Ticket To This Agent..</h5>
+    <select class="form-control" id="groupSelect" asp-items="@ViewBag.User">
+        <option value="0">--Select Agent--</option>
+    </select>
+    <button id="assignTicket" class="mt-2 btn btn-success d-none">Assign Ticket To this Agent </button>
+}
+else
+{
+    <h4>No Agent Assigned to this Group..</h4>
+}
+
+
+@section Scripts{
+
+    <script>
+        $(document).ready(function () {
+
+            $("#groupSelect").change(function () {
+                var x = $("#groupSelect option:selected").val();
+
+                if (x != 0) {
+                    $("#assignTicket").removeClass("d-none");
+                } else {
+                    $("#assignTicket").addClass("d-none");
+                }
+            });
+
+
+
+            $("#assignTicket").click(function () {
+                 var selectedUser = $("#groupSelect option:selected").val();
+                console.log(selectedUser);
+
+                     $.ajax({
+                        url: '@Url.Action("AssignAgentByAdmin", "HelpDesk")',
+                        method: "POST",
+                        dataType: "json",
+                        data: {
+                            ticketId: @ViewBag.TicketId,
+                            user: selectedUser,
+
+
+                },
+                    success: function (data) {
+                        console.log(data);
+                        if (data.isRedirect) {
+                            window.location.href = data.redirectUrl;
+                        }
+                    },
+                    error: function (err) {
+                        console.log(err);
+                    }
+        })
+            })
+
+        })
+    </script>
+}

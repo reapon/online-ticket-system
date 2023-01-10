@@ -1,0 +1,452 @@
+﻿@model OnlineTicketSystem.ViewModels.CreateTicket
+
+@{
+    List<Ticket> ticket = ViewBag.Messages;
+
+}
+
+
+<style>
+    :root {
+        --body-bg: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+        --msger-bg: #fff;
+        --border: 2px solid #ddd;
+        --left-msg-bg: #ececec;
+        --right-msg-bg: #579ffb;
+    }
+
+    html {
+        box-sizing: border-box;
+    }
+
+    *,
+    *:before,
+    *:after {
+        margin: 0;
+        padding: 0;
+        box-sizing: inherit;
+    }
+
+    /*   body {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+        background-image: var(--body-bg);
+        font-family: Helvetica, sans-serif;
+    }*/
+
+    .msger {
+        display: flex;
+        flex-flow: column wrap;
+        justify-content: center;
+        width: 100%;
+        max-width: 867px;
+        margin: 25px 120px;
+        height: calc(100% - 50px);
+        border: var(--border);
+        border-radius: 5px;
+        background: var(--msger-bg);
+        box-shadow: 0 15px 15px -5px rgba(0, 0, 0, 0.2);
+    }
+
+    .msger-header {
+        display: flex;
+        justify-content: space-between;
+        padding: 5px 10px;
+        border-bottom: var(--border);
+        background: #eee;
+        color: #666;
+    }
+
+    .msger-chat {
+        /*flex: 1;*/
+        padding: 10px;
+        height: 320px;
+        overflow-y: scroll;
+        overflow-x: hidden;
+    }
+
+        .msger-chat::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        .msger-chat::-webkit-scrollbar-track {
+            background: #ddd;
+        }
+
+        .msger-chat::-webkit-scrollbar-thumb {
+            background: #bdbdbd;
+        }
+
+    .msg {
+        display: flex;
+        align-items: flex-end;
+        margin-bottom: 10px;
+    }
+
+        .msg:last-of-type {
+            margin: 0;
+        }
+
+    .msg-img {
+        width: 50px;
+        height: 50px;
+        margin-right: 10px;
+        background: #ddd;
+        background-repeat: no-repeat;
+        background-position: center;
+        background-size: cover;
+        border-radius: 50%;
+    }
+
+    .msg-bubble {
+        max-width: 450px;
+        padding: 15px;
+        border-radius: 15px;
+        background: var(--left-msg-bg);
+    }
+
+    .msg-info {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 10px;
+    }
+
+    .msg-info-name {
+        margin-right: 10px;
+        font-weight: bold;
+    }
+
+    .msg-info-time {
+        font-size: 0.85em;
+    }
+
+    .left-msg .msg-bubble {
+        border-bottom-left-radius: 0;
+    }
+
+    .right-msg {
+        flex-direction: row-reverse;
+    }
+
+        .right-msg .msg-bubble {
+            background: var(--right-msg-bg);
+            color: #fff;
+            border-bottom-right-radius: 0;
+        }
+
+        .right-msg .msg-img {
+            margin: 0 0 0 10px;
+        }
+
+    .msger-inputarea {
+        display: flex;
+        padding: 10px;
+        border-top: var(--border);
+        background: #eee;
+    }
+
+        .msger-inputarea * {
+            padding: 10px;
+            border: none;
+            border-radius: 3px;
+            font-size: 1em;
+        }
+
+    .msger-input {
+        flex: 1;
+        background: #ddd;
+    }
+
+    .msger-send-btn {
+        margin-left: 10px;
+        background: rgb(0, 196, 65);
+        color: #fff;
+        font-weight: bold;
+        cursor: pointer;
+        transition: background 0.23s;
+    }
+
+        .msger-send-btn:hover {
+            background: rgb(0, 180, 50);
+        }
+
+    .msger-chat {
+        background-color: #fcfcfe;
+    }
+
+ 
+</style>
+
+@if (ticket != null && ticket.Count > 0)
+{
+
+    <section class="msger">
+        <form asp-action="TicketCreate" asp-controller="Ticket">
+
+            <header class="msger-header">
+                <div class="msger-header-title">
+                    <i class="fas fa-comment-alt"></i> Online Ticket System
+                </div>
+                <div class="msger-header-options">
+                    <div class="form-group">
+                        <input id="new" type="radio" asp-for="TicketType" name="ticketType" value="newTicket" /> New Ticket
+                        <input id="old" type="radio" asp-for="TicketType" name="ticketType" value="oldTicket" /> Old Ticket
+                    </div>
+                </div>
+            </header>
+
+            <main class="msger-chat">
+
+
+
+                @foreach (var item in ticket.OrderBy(x => x.CreatedTime))
+                {
+                    <div data-toggle="modal" data-target="#exampleModalCenter" id="@item.TicketID" class="ticketId label-success p-2 text-center text-white"><span class="badge badge-success">Click Here To Continue Conversation Against :  @item.TicketID</span></div>
+
+                    @foreach (var msg in item.TicketMessages.OrderBy(x => x.MessageTime))
+                    {
+
+
+                        @if (msg.UserName == ViewBag.User)
+                        {
+
+                            <div class="msg right-msg">
+                                <div class="msg-img"
+                                     style="background-image: url(https://image.flaticon.com/icons/svg/145/145867.svg)"></div>
+
+
+                                <div class="msg-bubble">
+                                    <div class="msg-info">
+                                        <div class="msg-info-name">@msg.UserName (You)</div>
+                                        <div class="msg-info-time">@msg.MessageTime</div>
+                                    </div>
+
+                                    <div class="msg-text">
+                                        @msg.MessageBody
+                                    </div>
+                                </div>
+                            </div>
+
+
+                        }
+                        else
+                        {
+                            <div class="msg left-msg">
+
+                                <div class="msg-img"
+                                     style="background-image: url(https://image.flaticon.com/icons/svg/327/327779.svg)"></div>
+
+                                <div class="msg-bubble">
+                                    <div class="msg-info">
+                                        <div class="msg-info-name">@msg.UserName</div>
+                                        <div class="msg-info-time">@msg.MessageTime</div>
+                                    </div>
+
+                                    <div class="msg-text">
+                                        @msg.MessageBody
+                                    </div>
+                                </div>
+                            </div>
+
+                        }
+
+                    }
+
+                }
+
+
+            </main>
+
+            <div class="msger-inputarea">
+
+                <textarea id="message" asp-for="MessageBody" class="msger-input" placeholder="Enter Your Message.." required rows="1"> </textarea>
+                <button id="createTicket" type="submit" class="msger-send-btn d-none">Create Ticket</button>
+            </div>
+
+        </form>
+
+        <button id="btnSendMsg" type="submit" class="msger-send-btn border-0 py-2 ml-0">Send Message</button>
+    </section>
+
+
+
+}else
+{
+    <h5 class="text-center">You Don't have any ticket. Create if you need one with your problem..</h5>
+    <form class="mt-2" asp-controller="Ticket" asp-action="TicketCreate">
+        <div class="form-group ">
+            <input id="new" type="hidden" asp-for="TicketType" name="ticketType" value="newTicket" /> Create Your Ticket...
+        </div>
+
+        <div class="form-group">
+            <textarea id="message" asp-for="MessageBody" class="form-control" placeholder="Type Your Message.." required> </textarea>
+            <span asp-validation-for="MessageBody" class="text-danger"></span>
+        </div>
+
+        <div id="createTicket" class="form-group">
+            <input type="submit" value="Create Ticket" class="btn btn-success" />
+        </div>
+    </form>
+}
+
+
+
+<!-- Modal -->
+<div class="modal fade" id="exampleModalCenter" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalCenterTitle">Write Your Message</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <textarea id="textMessage" class="form-control"></textarea>
+
+            </div>
+            <div class="modal-footer">
+                <button id="sendSingleMessage" class="btn btn-success">Send Message</button>
+
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+@section Scripts{
+
+    <script>
+
+/*        $('.msgBox').last().children('h6').text();
+ *        $('.msgBox h6').last().css("background-color", "yellow");
+ *        $('.msgContainer .ticketId').last().text();
+ *
+ *        v.getAttribute('value');<span style="display:none" class="searchTags" value=""></span>
+
+ */
+
+        $(document).ready(function () {
+
+
+            //$(document).on('click', 'button[data-id]', function (e) {
+            //    var requested_to = $(this).attr('data-id');
+
+            //    // Do whatever else you need to do.
+            //});
+
+            //$(".clickMe").click(function () {
+            //    var he = $(this).attr('data-id');
+            //    console.log(he);
+            //})
+
+
+            $(".ticketId").click(function () {
+                var ticketId = $(this).attr('id');
+                console.log(ticketId);
+
+
+
+                $("#sendSingleMessage").click(function () {
+
+                    var msg = $("#textMessage").val();
+
+                    $.ajax({
+                        url: '@Url.Action("MessageSend", "Ticket")',
+                        method: "POST",
+                        dataType: "json",
+                        data: {
+                            ticketId: ticketId,
+                            message: msg
+                        },
+                        success: function (data) {
+                            $("#message").empty();
+                            location.reload(true);
+                            console.log(data);
+                        },
+                        error: function (err) {
+                            console.log(err);
+                        }
+                    })
+                })
+
+            })
+
+
+            $("#new").click(function () {
+                var test = $("#new").attr("value");
+                if (test == "newTicket") {
+                    $("#createTicket").removeClass("d-none");
+                    $("#btnSendMsg").addClass("d-none");
+
+                }
+            });
+
+            $("#old").click(function () {
+                var test = $("#old").attr("value");
+                if (test == "oldTicket") {
+                    $("#btnSendMsg").removeClass("d-none");
+                    $("#createTicket").addClass("d-none");
+
+                }
+            });
+
+            //Working For Last Ticket ID.. Sending Single SMS For last ticket..
+            //var x = parseInt( $('.msgContainer .ticketId').last().text());
+            //console.log(x);
+
+
+            //$("#TicketType").click(function () {
+            //    var type = $("#TicketType").val();
+            //    if (type=="oldTicket") {
+            //        $("#TicketId").show();
+            //    }
+            //});
+
+            //$(".ticketId").click(function () {
+            //    $(".show").removeClass("d-none");
+            //})
+
+
+
+            $(".msger-chat").scrollTop($(".msger-chat")[0].scrollHeight);
+
+            $("#btnSendMsg").click(function () {
+
+                var tickId = $('.msger-chat .ticketId').last().attr('id');
+
+                var msg = $("#message").val();
+
+            $.ajax({
+            url: '@Url.Action("MessageSend", "Ticket")',
+            method: "POST",
+            dataType: "json",
+                data: {
+                ticketId: tickId,
+                message: msg
+            },
+            success: function (data) {
+                $("#message").empty();
+                location.reload(true);
+                console.log(data);
+            },
+            error: function (err) {
+                console.log(err);
+            }
+        })
+        })
+    })
+    </script>
+
+}
+
+
+
+
+

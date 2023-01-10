@@ -1,0 +1,124 @@
+﻿@model List<ApplicationUser>
+
+
+@{
+
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+}
+
+<style>
+    .enable, .disable{
+        cursor:pointer;
+    }
+
+    .disable:hover{
+        color:white;
+    }
+
+    .enable:hover{
+        color:white;
+    }
+</style>
+
+<table class="table table-bordered table-striped">
+    <thead>
+        <tr>
+            <th>User ID</th>
+            <th>UserName</th>
+            <th>Enable/Disable Company</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>@item.Id</td>
+                <td>@item.UserName</td>
+                <td>
+                    @if (item.EmailConfirmed == false)
+                    {
+                        <a  data-id="@item.Id" class="badge bg-success nav-link enable">Enable Company</a>
+                    }
+                    else
+                    {
+                        <a  data-id="@item.Id"  class="badge bg-danger nav-link disable">Disable Company</a>
+                    }
+                </td>
+            </tr>
+
+        }
+    </tbody>
+</table>
+
+@section Scripts{
+    <script>
+
+        $(document).ready(function () {
+
+            $(".disable").click(function () {
+                var id = $(this).data('id');
+
+
+                $.ajax({
+                    url: '@Url.Action("DisableCompany", "SuperAdmin")',
+                    method: "POST",
+                    dataType: "json",
+                    data: {
+                        userid: id,
+                    },
+                    success: function (data) {
+                        location.reload(true);
+                    },
+                    error: function (err) {
+                        console.log(err);
+                    }
+                });
+            });
+
+
+            $(".enable").click(function () {
+                var id = $(this).data('id');
+
+
+                $.ajax({
+                    url: '@Url.Action("EnableCompany", "SuperAdmin")',
+                    method: "POST",
+                    dataType: "json",
+                    data: {
+                        userid: id,
+                    },
+                    success: function (data) {
+                        location.reload(true);
+                    },
+                    error: function (err) {
+                        console.log(err);
+                    }
+                });
+            });
+
+            @*$("#disable").click(function () {
+                var id = $(this).data('id');
+                alert(id);
+
+                 $.ajax({
+                    url: '@Url.Action("DisableCompany", "SuperAdmin")',
+                    method: "POST",
+                    dataType: "json",
+                    data: {
+                        user: selectedUser,
+                        groupid: @ViewBag.GroupId,
+
+            },
+                success: function (data) {
+                    location.reload(true);
+                    console.log(data);
+                },
+                error: function (err) {
+                    console.log(err);
+                }
+            })
+            });*@
+        });
+
+    </script>
+}

@@ -1,0 +1,38 @@
+﻿@model IEnumerable<OnlineTicketSystem.Models.UserMail>
+
+@{
+
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+}
+
+
+
+<p>
+    <a class="btn btn-sm btn-success" asp-action="UserMailAddOrEdit" asp-controller="HelpDesk">Create Client Mail List</a>
+</p>
+<table class="table table-bordered table-striped">
+    <thead>
+        <tr>
+            <th>Client Email</th>
+            <th>Ticket Create Mail List</th>
+            <th>Support Mail List</th>
+            <th>Action</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>@item.ClientUser</td>
+                <td>@item.TicketMailList</td>
+                <td>@item.SupportMailList</td>
+                <td>
+                    <a class="btn btn-sm btn-warning text-white" asp-action="UserMailAddOrEdit" asp-controller="HelpDesk" asp-route-id="@item.ID">Edit Client Mail</a>
+
+                    
+                    <a class="btn btn-sm btn-danger" asp-action="DeleteClientMailList" asp-route-id="@item.ID" onclick="return confirm('Are you sure you want to delete?')" title="Delete Client">Delete</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

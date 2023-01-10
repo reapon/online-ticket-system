@@ -1,0 +1,100 @@
+﻿@{
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+}
+
+<div class="row text-center justify-content-between">
+
+
+    <h6 class="bg-dark text-white py-2">See ticket status Daily, Monthly and Yearly...</h6>
+
+    <div class="form-group">
+        <input id="btnTodayTicket" type="radio" name="ticketType" value="todayTicket" /> Today Ticket Status
+        <input id="btnMonthTicket" type="radio" name="ticketType" value="monthTicket" /> Month Ticket Status
+        <input id="btnYearTicket" type="radio" name="ticketType" value="yearTicket" /> Year Ticket Status
+    </div>
+
+    <div id="ticketchart"></div>
+
+</div>
+
+
+
+@section Scripts
+{
+    <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+
+    <script type="text/javascript">
+
+        $(document).ready(function () {
+
+            $("#btnTodayTicket").click(function () {
+                google.charts.load('current', { 'packages': ['corechart'] });
+                google.charts.setOnLoadCallback(drawChart);
+                function drawChart() {
+                    var jsonData = $.ajax({
+                        url: '@Url.Action("TodayTicketStatusChartData", "HelpDesk")',
+                        dataType: "json",
+                        async: false
+                    }).responseText;
+                    var data = new google.visualization.DataTable(jsonData);
+                    var options = {
+                        'title': 'Daily Ticket Status',
+                        'width': 600,
+                        'height': 500
+                    };
+
+                    var chart = new google.visualization.PieChart(document.getElementById('ticketchart'));
+                    chart.draw(data, options);
+                }
+            })
+
+
+            $("#btnMonthTicket").click(function () {
+                google.charts.load('current', { 'packages': ['corechart'] });
+                google.charts.setOnLoadCallback(drawChart);
+                function drawChart() {
+                    var jsonData = $.ajax({
+                        url: '@Url.Action("MonthTicketStatusChartData", "HelpDesk")',
+                        dataType: "json",
+                        async: false
+                    }).responseText;
+                    var data = new google.visualization.DataTable(jsonData);
+                    var options = {
+                        'title': 'Monthly Ticket Status',
+                        'width': 600,
+                        'height': 500
+                    };
+
+                    var chart = new google.visualization.PieChart(document.getElementById('ticketchart'));
+                    chart.draw(data, options);
+                }
+            })
+
+            $("#btnYearTicket").click(function () {
+                google.charts.load('current', { 'packages': ['corechart'] });
+                google.charts.setOnLoadCallback(drawChart);
+                function drawChart() {
+                    var jsonData = $.ajax({
+                        url: '@Url.Action("YearlyTicketStatusChartData", "HelpDesk")',
+                        dataType: "json",
+                        async: false
+                    }).responseText;
+                    var data = new google.visualization.DataTable(jsonData);
+                    var options = {
+                        'title': 'Yearly Ticket Status',
+                        'width': 600,
+                        'height': 500
+                    };
+
+                    var chart = new google.visualization.PieChart(document.getElementById('ticketchart'));
+                    chart.draw(data, options);
+                }
+            })
+
+
+
+           
+
+        });
+    </script>
+}

@@ -1,0 +1,122 @@
+﻿@{
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+}
+
+<div class="row text-center justify-content-between">
+
+
+    <h6 class="bg-dark text-white py-2">See Group Ticket Daily, Monthly and Yearly...</h6>
+
+    <div class="form-group">
+        <input id="btnTodayTicket" type="radio" name="ticketType" value="todayTicket" /> Today Group Ticket Status
+        <input id="btnMonthTicket" type="radio" name="ticketType" value="monthTicket" /> Monthly Group Ticket Status
+        <input id="btnYearTicket" type="radio" name="ticketType" value="yearTicket" /> Yearly Group Ticket Status
+    </div>
+
+    <div id="ticketchart"></div>
+
+</div>
+
+
+
+@section Scripts
+{
+    <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+
+    <script type="text/javascript">
+
+        $(document).ready(function () {
+
+            $("#btnTodayTicket").click(function () {
+                google.charts.load('current', { 'packages': ['corechart'] });
+                google.charts.setOnLoadCallback(drawChart);
+                function drawChart() {
+                    var jsonData = $.ajax({
+                        url: '@Url.Action("TodayGroupStatus", "HelpDesk")',
+                        dataType: "json",
+                        async: false
+                    }).responseText;
+                    var data = new google.visualization.DataTable(jsonData);
+                    var options = {
+                        'title': 'Ticket Opened From Groups : Today '  ,
+                        'width': 600,
+                        'height': 500,
+                        hAxis: {
+                            title: 'Group Name',
+                            minValue: 0
+                        },
+                        vAxis: {
+                            title: 'Total Ticket Created'
+                        }
+                    };
+
+                    var chart = new google.visualization.ColumnChart(document.getElementById('ticketchart'));
+                    chart.draw(data, options);
+                }
+            })
+
+
+            $("#btnMonthTicket").click(function () {
+                google.charts.load('current', { 'packages': ['corechart'] });
+                google.charts.setOnLoadCallback(drawChart);
+                function drawChart() {
+                    var jsonData = $.ajax({
+                        url: '@Url.Action("MonthlyGroupStatus", "HelpDesk")',
+                        dataType: "json",
+                        async: false
+                    }).responseText;
+                    var data = new google.visualization.DataTable(jsonData);
+                    var options = {
+                        'title': 'Ticket Opened From Groups : This Month',
+                        'width': 600,
+                        'height': 500,
+                        hAxis: {
+                            title: 'Group Name',
+                            minValue: 0
+                        },
+                        vAxis: {
+                            title: 'Total Ticket Created'
+                        }
+                    };
+
+                    var chart = new google.visualization.ColumnChart(document.getElementById('ticketchart'));
+                    chart.draw(data, options);
+                }
+            })
+
+            $("#btnYearTicket").click(function () {
+                google.charts.load('current', { 'packages': ['corechart'] });
+                google.charts.setOnLoadCallback(drawChart);
+                function drawChart() {
+                    var jsonData = $.ajax({
+                        url: '@Url.Action("YearlyGroupStatus", "HelpDesk")',
+                        dataType: "json",
+                        async: false
+                    }).responseText;
+                    var data = new google.visualization.DataTable(jsonData);
+                    var options = {
+                        'title': 'Ticket Opened From Groups : This Year ',
+                        'width': 600,
+                        'height': 500,
+                        hAxis: {
+                            title: 'Group Name',
+                            minValue: 0
+                        },
+                        vAxis: {
+                            title: 'Total Ticket Created'
+                        }
+                    };
+
+                    var chart = new google.visualization.ColumnChart(document.getElementById('ticketchart'));
+                    chart.draw(data, options);
+                }
+            })
+
+
+
+
+
+        });
+    </script>
+}
+

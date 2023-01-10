@@ -1,0 +1,129 @@
+﻿@model IEnumerable<OnlineTicketSystem.Models.Category>
+
+
+@{
+    ViewData["Title"] = "Category";
+
+
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+
+
+}
+<link href="https://cdn.datatables.net/1.11.1/css/jquery.dataTables.min.css" rel="stylesheet" />
+
+<div class="container mt-1">
+    @*<div class="text-center">
+        <h1 class="badge bg-success">Create New Category</h1>
+
+    </div>*@
+    <p>
+        <a asp-action="AddOrEdit" asp-controller="HelpDesk" class="btn btn-sm btn-success" title="Create Category">Create Category</a>
+    </p>
+    <table class="table table-bordered table-striped table-hover table-responsive-lg" id="app-table">
+        <thead>
+            <tr>
+                <th>
+                    @Html.DisplayNameFor(model => model.CategoryID)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.CategoryName)
+                </th>
+
+                <th>Action</th>
+
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.CategoryID)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.CategoryName)
+                    </td>
+
+
+
+
+
+
+                    <td>
+                        <a style="color:white;" class="btn btn-sm btn-warning" asp-action="AddOrEdit" asp-route-id="@item.CategoryID" title="Edit Category">Edit</a>
+
+                        <a class="btn btn-sm btn-danger" asp-action="Delete" asp-route-id="@item.CategoryID" onclick="return confirm('Are you sure you want to delete?')" title="Delete Category">Delete</a>
+
+                    </td>
+
+
+
+
+
+
+
+                </tr>
+            }
+        </tbody>
+    </table>
+
+</div>
+
+
+@section Scripts{
+
+    <script src="https://cdn.datatables.net/1.11.1/js/jquery.dataTables.min.js"></script>
+    <script>
+        $(document).ready(function () {
+            $('#app-table').DataTable();
+        });
+
+
+
+        function PublishApp(appid) {
+            try {
+                $.ajax({
+                    url: '@Url.Action("PublishApp", "App")',
+                    type: "POST",
+                    data: { appId: appid },
+                    success: function (oData) {
+                        console.log(oData);
+                        toastr.success('App Published...');
+                        location.reload();
+
+                    },
+                    error: function (error) {
+                        console.log(oData);
+                    }
+                });
+            }
+            catch (e) {
+                console.log(e.message);
+            }
+        }
+
+
+        function UnPublishApp(appid) {
+            try {
+                $.ajax({
+                    url: '@Url.Action("UnPublishApp", "App")',
+                    type: "POST",
+                    data: { appId: appid },
+                    success: function (oData) {
+                        console.log(oData);
+                        toastr.success('App Un-Published...');
+                        location.reload();
+
+                    },
+                    error: function (error) {
+                        console.log(oData);
+                    }
+                });
+            }
+            catch (e) {
+                console.log(e.message);
+            }
+        }
+    </script>
+
+}

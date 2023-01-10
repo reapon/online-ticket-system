@@ -1,0 +1,550 @@
+﻿@model OnlineTicketSystem.ViewModels.CreateTicket
+@inject UserManager<ApplicationUser> UserManager
+
+
+@{
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+    List<Ticket> ticket = ViewBag.Messages;
+
+
+    @*var photoPath = "~/images/" + (Model.Employee.PhotoPath ?? "noimage.jpg");
+        <img class="card-img-top" src="@photoPath" asp-append-version="true" />*@
+}
+
+
+<style>
+    :root {
+        --body-bg: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+        --msger-bg: #fff;
+        --border: 2px solid #ddd;
+        --left-msg-bg: #ececec;
+        --right-msg-bg: #579ffb;
+    }
+
+    html {
+        box-sizing: border-box;
+    }
+
+    *,
+    *:before,
+    *:after {
+        margin: 0;
+        padding: 0;
+        box-sizing: inherit;
+    }
+
+    /*   body {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+        background-image: var(--body-bg);
+        font-family: Helvetica, sans-serif;
+    }*/
+
+    .msger {
+        display: flex;
+        flex-flow: column wrap;
+        justify-content: center;
+        width: 100%;
+        max-width: 867px;
+        margin: 25px 120px;
+        height: calc(100% - 50px);
+        border: var(--border);
+        border-radius: 5px;
+        background: var(--msger-bg);
+        box-shadow: 0 15px 15px -5px rgba(0, 0, 0, 0.2);
+    }
+
+    .msger-header {
+        display: flex;
+        justify-content: space-between;
+        padding: 5px 10px;
+        border-bottom: var(--border);
+        background: #eee;
+        color: #666;
+    }
+
+    .msger-chat {
+        /*flex: 1;*/
+        padding: 10px;
+        height: 320px;
+        overflow-y: scroll;
+        overflow-x: hidden;
+    }
+
+        .msger-chat::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        .msger-chat::-webkit-scrollbar-track {
+            background: #ddd;
+        }
+
+        .msger-chat::-webkit-scrollbar-thumb {
+            background: #bdbdbd;
+        }
+
+    .msg {
+        display: flex;
+        align-items: flex-end;
+        margin-bottom: 10px;
+    }
+
+        .msg:last-of-type {
+            margin: 0;
+        }
+
+    .msg-img {
+        width: 50px;
+        height: 50px;
+        margin-right: 10px;
+        background: #ddd;
+        background-repeat: no-repeat;
+        background-position: center;
+        background-size: cover;
+        border-radius: 50%;
+    }
+
+    .msg-bubble {
+        max-width: 450px;
+        padding: 15px;
+        border-radius: 15px;
+        background: var(--left-msg-bg);
+    }
+
+    .msg-info {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 10px;
+    }
+
+    .msg-info-name {
+        margin-right: 10px;
+        font-weight: bold;
+    }
+
+    .msg-info-time {
+        font-size: 0.85em;
+    }
+
+    .left-msg .msg-bubble {
+        border-bottom-left-radius: 0;
+    }
+
+    .right-msg {
+        flex-direction: row-reverse;
+    }
+
+        .right-msg .msg-bubble {
+            background: var(--right-msg-bg);
+            color: #fff;
+            border-bottom-right-radius: 0;
+        }
+
+        .right-msg .msg-img {
+            margin: 0 0 0 10px;
+        }
+
+    .msger-inputarea {
+        display: flex;
+        padding: 10px;
+        border-top: var(--border);
+        background: #eee;
+    }
+
+        .msger-inputarea * {
+            padding: 10px;
+            border: none;
+            border-radius: 3px;
+            font-size: 1em;
+        }
+
+    .msger-input {
+        flex: 1;
+        background: #ddd;
+    }
+
+    .msger-send-btn {
+        margin-left: 10px;
+        background: rgb(0, 196, 65);
+        color: #fff;
+        font-weight: bold;
+        cursor: pointer;
+        transition: background 0.23s;
+    }
+
+        .msger-send-btn:hover {
+            background: rgb(0, 180, 50);
+        }
+
+    .msger-chat {
+        background-color: #fcfcfe;
+    }
+
+    .ticketId {
+        cursor: pointer;
+    }
+</style>
+
+@if (ticket != null && ticket.Count > 0)
+{
+
+    <section class="msger">
+        <form asp-action="TicketCreate" asp-controller="HelpDesk" enctype="multipart/form-data">
+
+            <header class="msger-header">
+                <div class="msger-header-title">
+                    <i class="fas fa-comment-alt"></i> Help Desk
+
+                    <span class="ml-5"><label class="mr-3">Support Group :</label><a title="Click Here To Change Support Group" class=" ml-3 badge bg-dark text-decoration-none" asp-action="Index" asp-controller="HelpDesk">  @ViewBag.Group </a></span>
+                </div>
+                <div class="msger-header-options">
+                    <div class="form-group">
+                        <input id="new" type="radio" asp-for="TicketType" name="ticketType" value="newTicket" /> New Ticket
+                        <input id="old" type="radio" asp-for="TicketType" name="ticketType" value="oldTicket" /> Old Ticket
+                    </div>
+                </div>
+            </header>
+
+            <main class="msger-chat">
+
+
+
+                @foreach (var item in ticket.OrderBy(x => x.CreatedTime))
+                {
+                    @if (item.Status.StatusName == "Closed")
+                    {
+                        <div class="label-success p-2 text-center text-white">
+                            <span class="badge bg-success">Ticket ID :  @item.TicketID , Status : @item.Status.StatusName , Support Group : @item.Group.GroupName</span>
+                            <span title="Click Here To Re-Open This Ticket.." data-bs-toggle="modal" data-bs-target="#exampleModal" id="@item.TicketID" class="badge bg-warning ticketId text-white">Re-Open</span>
+                        </div>
+                    }
+                    else if (item.Status.StatusName == "Re-Opened")
+                    {
+                        <div id="@item.TicketID" class="label-success p-2 text-center text-white">
+                            <span class="badge bg-success">Ticket ID :  @item.TicketID , Status : @item.Status.StatusName , Support Group : @item.Group.GroupName</span>
+                        </div>
+                    }
+                    else if (item.Status.StatusName == "Pending")
+                    {
+                        <div id="@item.TicketID" class="label-success p-2 text-center text-white">
+                            <span class="badge bg-success">Ticket ID :  @item.TicketID , Status : @item.Status.StatusName , Support Group : @item.Group.GroupName</span>
+                        </div>
+                    }
+                    else
+                    {
+                        <div id="@item.TicketID" class="label-success p-2 text-center text-white">
+                            <span class="badge bg-success">Ticket ID :  @item.TicketID , Status : @item.Status.StatusName , Support Group : @item.Group.GroupName</span>
+                        </div>
+                    }
+
+                    @foreach (var msg in item.TicketMessages.OrderBy(x => x.MessageTime))
+                    {
+
+                        @*var photoPath = "~/images/" + (Model.Employee.PhotoPath ?? "noimage.jpg");
+                <img class="card-img-top" src="@photoPath" asp-append-version="true" />*@
+
+                        var photoPath = "~/images/" + msg.PhotoPath;
+
+
+                        @if (msg.UserName == ViewBag.User)
+                        {
+
+                            <div class="msg right-msg">
+                                @if (UserManager.GetUserAsync(User).Result.ProfilePicture != null)
+                                {
+                                    <div class="msg-img"
+                                         style="background-image: url(data:image/*;base64,@(Convert.ToBase64String(UserManager.GetUserAsync(User).Result.ProfilePicture)))"></div>
+                                }
+                                else
+                                {
+                                    <div class="msg-img"
+                                         style="background-image: url(https://cdn-icons-png.flaticon.com/512/149/149071.png)"></div>
+                                }
+
+
+                                <div class="msg-bubble">
+                                    <div class="msg-info">
+                                        <div class="msg-info-name">@msg.UserName (You)</div>
+                                        <div class="msg-info-time">@msg.MessageTime</div>
+                                    </div>
+
+                                    <div class="msg-text">
+                                        @msg.MessageBody
+                                        <br />
+                                        @if (msg.PhotoPath != null)
+                                        {
+                                            <img style="width:150px; height:150px;" src="@photoPath" asp-append-version="true" />
+
+                                        }
+
+                                    </div>
+                                </div>
+                            </div>
+
+
+                        }
+                        else
+                        {
+                            <div class="msg left-msg">
+
+
+                                <div class="msg-img"
+                                     style="background-image: url( https://www.svgrepo.com/show/110246/robot.svg)"></div>
+
+
+
+                                <div class="msg-bubble">
+                                    <div class="msg-info">
+                                        <div class="msg-info-name">@msg.UserName</div>
+                                        <div class="msg-info-time">@msg.MessageTime</div>
+                                    </div>
+
+                                    <div class="msg-text">
+                                        @msg.MessageBody
+                                    </div>
+                                </div>
+                            </div>
+
+                        }
+
+                    }
+
+                }
+
+
+            </main>
+            <div class="ticketButtonBody d-none">
+                <div class="custom-file mt-2">
+                    <input asp-for="Photo" class="form-control custom-file-input">
+                    @*<label class="custom-file-label">Choose File If You Have Any...</label>*@
+                </div>
+
+                <div class="msger-inputarea ">
+                    <textarea id="message" asp-for="MessageBody" class="msger-input" placeholder="Enter Your Message.." required rows="1"> </textarea>
+                    <button id="createTicket" type="submit" class="msger-send-btn">Create Ticket</button>
+                </div>
+
+            </div>
+
+        </form>
+
+        @*<button id="btnSendMsg" type="submit" class="msger-send-btn border-0 py-2 ml-0">Send Message</button>*@
+    </section>
+
+
+    @*<div class="row">
+            <h2>Upload file using jQuery ajax in Asp.net Core Razor Pages</h2>
+
+            <div class=" form-group  text-center offset-3">
+                <div class="custom-file">
+                    <textarea id="textMessage"></textarea>
+                    <input type="file" id="fileUpload" class="fileUpload">
+                    <button id="btnUpload" class="btn btn-success">Upload</button>
+                </div>
+            </div>
+        </div>*@
+
+
+
+}
+else
+{
+    <h5 class="text-center">You Don't have any ticket. Create if you need one with your problem..</h5>
+    <form class="mt-2" asp-action="TicketCreate" asp-controller="HelpDesk" enctype="multipart/form-data">
+        <div class="form-group">
+            <label>Support Group :</label><a title="Click Here To Change Support Group" class=" ml-3 badge bg-dark" asp-action="Index" asp-controller="HelpDesk">@ViewBag.Group</a>
+        </div>
+        <br />
+        <div class="form-group ">
+            <input id="new" type="hidden" asp-for="TicketType" name="ticketType" value="newTicket" /> Create Your Ticket...
+        </div>
+        <br />
+        <div class="form-group">
+
+            <textarea id="message" asp-for="MessageBody" class="form-control" placeholder="Type Your Message.." required> </textarea>
+            <span asp-validation-for="MessageBody" class="text-danger"></span>
+
+            <div class="custom-file mt-2">
+                <input asp-for="Photo" class="form-control custom-file-input">
+                @*<label class="custom-file-label">Choose File If You Have Any...</label>*@
+            </div>
+        </div>
+        <br />
+        <div id="createTicket" class="form-group">
+            <input type="submit" value="Create Ticket" class="btn btn-success" />
+        </div>
+    </form>
+}
+
+
+
+<!-- Modal -->
+<div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalCenterTitle">Write Your Message</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+
+            <div class="modal-body">
+
+                @*<input type="file" name="file" id="file" />
+                    <br />*@
+
+
+                <textarea required id="textMessage" class="form-control"></textarea>
+
+
+            </div>
+            <div class="modal-footer">
+                <button id="sendSingleMessage" class="btn btn-success">Send Message</button>
+
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+
+            </div>
+
+        </div>
+    </div>
+</div>
+
+
+@*//        if (SignInManager.IsSignedIn(User))
+    //        {
+    //    < li class="nav-item" style="align-self: center;">
+    //        if(UserManager.GetUserAsync(User).Result.ProfilePicture != null)
+    //        {
+    //            < img style = "width:40px;height:40px; object-fit:cover; border-radius:30px" src = "data:image/*;base64,@(Convert.ToBase64String(UserManager.GetUserAsync(User).Result.ProfilePicture))" >
+    //        }
+    //    </li>
+    //    .
+    //    .
+    //}*@
+
+
+
+@section Scripts{
+
+    <script>
+
+
+        $(document).ready(function () {
+
+
+
+
+            $('.custom-file-input').on("change", function () {
+                var fileName = $(this).val().split("\\").pop();
+                $(this).next('.custom-file-label').html(fileName);
+            });
+
+
+            $(".ticketId").click(function () {
+                var ticketId = $(this).attr('id');
+                console.log(ticketId);
+
+                $("#sendSingleMessage").click(function () {
+
+
+
+                    var msg = $("#textMessage").val();
+
+                    $.ajax({
+                        url: '@Url.Action("UserMessageSend", "HelpDesk")',
+                        method: "POST",
+                        dataType: "json",
+                        data: {
+                            ticketId: ticketId,
+                            message: msg,
+                        },
+                        success: function (data) {
+                            $("#message").empty();
+                            location.reload(true);
+                            console.log(data);
+                        },
+                        error: function (err) {
+                            console.log(err);
+                        }
+                    })
+                })
+
+            })
+
+
+            $("#new").click(function () {
+                var test = $("#new").attr("value");
+                if (test == "newTicket") {
+                    $(".ticketButtonBody").removeClass("d-none");
+
+                }
+            });
+
+            $("#old").click(function () {
+                var test = $("#old").attr("value");
+                if (test == "oldTicket") {
+                    $(".ticketButtonBody").addClass("d-none");
+
+                }
+            });
+
+
+
+            $(".msger-chat").scrollTop($(".msger-chat")[0].scrollHeight);
+
+            @*$("#btnSendMsg").click(function () {
+
+                var tickId = $('.msger-chat .ticketId').last().attr('id');
+
+                var msg = $("#message").val();
+
+            $.ajax({
+            url: '@Url.Action("UserMessageSend", "HelpDesk")',
+            method: "POST",
+            dataType: "json",
+                data: {
+                ticketId: tickId,
+                message: msg
+            },
+            success: function (data) {
+                $("#message").empty();
+                location.reload(true);
+                console.log(data);
+            },
+            error: function (err) {
+                console.log(err);
+            }
+        })
+        })*@
+    })
+    </script>
+
+}
+
+
+
+
+
+
+
+
+
+
+@*<form class="mt-2" asp-controller="HelpDesk" asp-action="TicketCreate">
+        <div class="form-group">
+            <label>Support Group :</label><a title="Click Here To Change Support Group" class=" ml-3 btn btn-outline-dark rounded-0" asp-action="Index" asp-controller="HelpDesk">@ViewBag.Group</a>
+        </div>
+
+        <div class="form-group">
+            <textarea id="message" asp-for="MessageBody" class="form-control" placeholder="Type Your Message.." required> </textarea>
+            <span asp-validation-for="MessageBody" class="text-danger"></span>
+        </div>
+
+        <div id="createTicket" class="form-group">
+            <input type="submit" value="Create Ticket" class="btn btn-success" />
+        </div>
+    </form>*@

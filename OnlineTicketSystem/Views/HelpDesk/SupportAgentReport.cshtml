@@ -1,0 +1,137 @@
+﻿
+@{
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+}
+
+<div class="row text-center justify-content-center">
+    
+
+    <h6 class="bg-dark text-white py-2">See Support Agent status Daily, Monthly and Yearly...</h6>
+
+    <div class="mt-2">
+
+        <h4 class="badge bg-success mb-2">Select Support Agent To See Report...</h4>
+        <select class="form-control mb-2 mt-2 selectpicker" data-live-search="true" id="groupSelect" asp-items="@ViewBag.User">
+            <option value="0">--Select Support Agent--</option>
+        </select>
+
+
+        <div class="form-group">
+            <input id="btnTodaySupport"  type="radio" name="SupportType" value="todaySupport" /> Support Given By Agent Today
+            <input id="btnMonthSupport" type="radio" name="SupportType" value="monthSupport" /> Support Given By Agent In This Month
+            <input id="btnYearSupport" type="radio" name="SupportType" value="yearSupport" /> Support Given By Agent In This Year
+        </div>
+
+
+        <div id="supportchart">
+
+        </div>
+    </div>
+
+</div>
+
+
+
+
+@section Scripts
+{
+    <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+
+    <script type="text/javascript">
+
+        $(document).ready(function () {
+
+            $("#btnTodaySupport").click(function () {
+                var selectedUser = $("#groupSelect option:selected").val();
+
+                google.charts.load('current', { 'packages': ['corechart'] });
+                google.charts.setOnLoadCallback(drawChart);
+                function drawChart() {
+                    var jsonData = $.ajax({
+                        url: "/HelpDesk/TodaySupportCountByAgent?supportAgent=" + selectedUser,
+                        dataType: "json",
+                        async: false
+                    }).responseText;
+                    var data = new google.visualization.DataTable(jsonData);
+                    var options = {
+                        'title': 'Support Agents Daily Support Report..',
+                        'width': 600,
+                        'height': 350,
+                        'pointSize': 5,                        
+                        vAxis: {
+                            title: 'Total Ticket Count'
+                        },
+                    };
+
+                    var chart = new google.visualization.LineChart(document.getElementById('supportchart'));
+                    chart.draw(data, options);
+                }
+
+
+            });
+
+
+
+
+            $("#btnMonthSupport").click(function () {
+                var selectedUser = $("#groupSelect option:selected").val();
+
+                google.charts.load('current', { 'packages': ['corechart'] });
+                google.charts.setOnLoadCallback(drawChart);
+                function drawChart() {
+                    var jsonData = $.ajax({
+                        url: "/HelpDesk/MonthlySupportCountByAgent?supportAgent=" + selectedUser,
+                        dataType: "json",
+                        async: false
+                    }).responseText;
+                    var data = new google.visualization.DataTable(jsonData);
+                    var options = {
+                        'title': 'Support Agents Monthly Support Report..',
+                        'width': 600,
+                        'height': 350,
+                        'pointSize': 5,
+                        vAxis: {
+                            title: 'Total Ticket Count'
+                        },
+                    };
+
+                    var chart = new google.visualization.LineChart(document.getElementById('supportchart'));
+                    chart.draw(data, options);
+                }
+
+
+            });
+
+
+            $("#btnYearSupport").click(function () {
+                var selectedUser = $("#groupSelect option:selected").val();
+
+                google.charts.load('current', { 'packages': ['corechart'] });
+                google.charts.setOnLoadCallback(drawChart);
+                function drawChart() {
+                    var jsonData = $.ajax({
+                        url: "/HelpDesk/YearlySupportCountByAgent?supportAgent=" + selectedUser,
+                        dataType: "json",
+                        async: false
+                    }).responseText;
+                    var data = new google.visualization.DataTable(jsonData);
+                    var options = {
+                        'title': 'Support Agents Yearly Support Report..',
+                        'width': 600,
+                        'height': 350,
+                        'pointSize': 5,
+                        vAxis: {
+                            title: 'Total Ticket Count'
+                        },
+                    };
+
+                    var chart = new google.visualization.LineChart(document.getElementById('supportchart'));
+                    chart.draw(data, options);
+                }
+
+
+            });
+
+        });
+    </script>
+}

@@ -1,0 +1,36 @@
+﻿@model IEnumerable<OnlineTicketSystem.Models.Group>
+
+@{
+
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+}
+
+
+
+<p>
+    <a class="btn btn-sm btn-success" asp-action="GroupAddOrEdit" asp-controller="HelpDesk">Create Group</a>
+</p>
+<table class="table table-bordered table-striped">
+    <thead>
+        <tr>
+            <th>Group ID</th>
+            <th>Group Name</th>
+            <th>Action</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>@item.GroupID</td>
+                <td>@item.GroupName</td>
+                <td>
+                    <a class="btn btn-sm btn-warning text-white" asp-action="GroupAddOrEdit" asp-controller="HelpDesk" asp-route-id="@item.GroupID">Edit Group</a>
+
+                    <a class="btn btn-sm btn-primary" asp-action="AssignAdmin" asp-controller="HelpDesk" asp-route-id="@item.GroupID">Assign Admin</a>
+                    <a class="btn btn-sm btn-danger" asp-action="DeleteGroup" asp-route-id="@item.GroupID" onclick="return confirm('Are you sure you want to delete?')" title="Delete Group">Delete</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

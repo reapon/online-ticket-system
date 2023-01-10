@@ -1,0 +1,40 @@
+﻿@model IEnumerable<OnlineTicketSystem.Models.Group>
+
+@{
+
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+}
+
+@if (Model.Any())
+{
+
+    <table class="table table-bordered table-striped">
+        <thead>
+            <tr>
+                <th>Group Name</th>
+                <th>Assign Agent To Group</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td>@item.GroupName</td>
+                    <td>
+
+                        <a class="btn btn-sm btn-primary" asp-action="AssignAgent" asp-controller="HelpDesk" asp-route-id="@item.GroupID">Assign Agent</a>
+
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+
+}
+else
+{
+    <h4 class="text-center bg-primary py-2 text-white">No Group Assigned For You...</h4>
+
+}
+
+

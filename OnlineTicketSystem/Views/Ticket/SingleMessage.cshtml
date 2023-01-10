@@ -1,0 +1,229 @@
+﻿@model OnlineTicketSystem.ViewModels.CreateTicket
+
+@{
+    List<Ticket> ticket = ViewBag.Messages;
+
+
+    //List<TicketMessage> messages = ViewBag.Messages;
+}
+<link href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css" rel="stylesheet" />
+
+<style>
+    .msgBox {
+        border: 2px solid #dedede;
+        background-color: #f1f1f1;
+        border-radius: 5px;
+        padding: 10px;
+        margin: 10px 0;
+    }
+
+    .darker {
+        border-color: #ccc;
+        background-color: #ddd;
+    }
+
+    .msgBox::after {
+        content: "";
+        clear: both;
+        display: table;
+    }
+
+    /*  .container img {
+        float: left;
+        max-width: 60px;
+        width: 100%;
+        margin-right: 20px;
+        border-radius: 50%;
+    }
+
+        .container img.right {
+            float: right;
+            margin-left: 20px;
+            margin-right: 0;
+        }*/
+
+    .time-right {
+        float: right;
+        color: #aaa;
+    }
+
+    .time-left {
+        float: left;
+        color: #999;
+    }
+
+    .msgContainer {
+        height: 350px;
+        overflow-y: scroll;
+        overflow-x: hidden;
+    }
+</style>
+@*<div>
+    @if (ticket != null && ticket.Count > 0)
+    {
+        @foreach (var item in ticket)
+        {
+            @foreach (var i in item.TicketMessages.OrderBy(x => x.MessageBody))
+            {
+                @i.MessageBody
+            }
+        }
+    }
+</div>*@
+
+@if (ticket != null && ticket.Count > 0)
+{
+    <div class="msgContainer">
+        @foreach (var item in ticket)
+        {
+            @foreach (var msg in item.TicketMessages.OrderBy(x => x.MessageTime))
+            {
+                @if (msg.UserName == ViewBag.User)
+                {
+                    <div class="msgBox">
+                        <h6>You (@msg.UserName)</h6>
+                        <p>@msg.MessageBody</p>
+                        <span class="time-right">@msg.MessageTime</span>
+                    </div>
+                }
+                else
+                {
+                    <div class="msgBox darker">
+                        <h6>@msg.UserName</h6>
+                        <p>@msg.MessageBody</p>
+                        <span class="time-right">@msg.MessageTime</span>
+                    </div>
+                }
+
+
+
+
+            }
+        }
+    </div>
+}
+
+
+
+
+<div>
+    <form asp-controller="Ticket" asp-action="TicketCreate">
+        <div class="form-group">
+            <input type="radio" asp-for="TicketType" name="ticketType" value="newTicket" /> new
+            <input type="radio" asp-for="TicketType" name="ticketType" value="oldTicket" /> Old
+            <input asp-for="TicketID" type="hidden" />
+        </div>
+        <div class="form-group">
+            <label asp-for="MessageBody" class="control-label"></label>
+            <textarea asp-for="MessageBody" class="form-control" rows="3" required> </textarea>
+            <span asp-validation-for="MessageBody" class="text-danger"></span>
+        </div>
+        <div class="form-group">
+            <input type="submit" value="Create Ticket" class="btn btn-success" />
+        </div>
+    </form>
+
+
+    <div class="mt-2">
+        <div class="form-group">
+            <textarea id="message" class="form-control" placeholder="Type Your Message.." required></textarea>
+            <button id="btnSendMsg" class="btn btn-success mt-1">Send</button>
+        </div>
+    </div>
+
+
+</div>
+
+
+@section Scripts{
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
+    <script>
+
+
+        $(document).ready(function () {
+
+            $("#TicketType").click(function () {
+                var type = $("#TicketType").val();
+                if (type=="oldTicket") {
+                    $("#TicketId").show();
+                }
+            });
+
+            $(".msgContainer").scrollTop($(".msgContainer")[0].scrollHeight);
+
+            $("#btnSendMsg").click(function () {
+
+                var msg = $("#message").val();
+
+            $.ajax({
+            url: '@Url.Action("MessageSend", "Ticket")',
+            method: "POST",
+            dataType: "json",
+            data: {
+                ticketId: @ViewBag.TicketID,
+                message: msg
+            },
+            success: function (data) {
+                $("#message").empty();
+                toastr.success('Message Sent...');
+                location.reload(true);
+                console.log(data);
+            },
+            error: function (err) {
+                console.log(err);
+            }
+        })
+        })
+    })
+    </script>
+
+}
+
+
+
+
+
+
+
+
+@*<div>
+
+        @if (messages != null && messages.Count > 0)
+        {
+
+            <div class="msgContainer">
+                @foreach (var msg in messages.OrderBy(x => x.MessageTime))
+                {
+
+                    <div class="msgBox">
+                        <h6>@msg.UserName</h6>
+                        <p>@msg.MessageBody</p>
+                        <span class="time-right">@msg.MessageTime</span>
+                    </div>
+
+
+
+                }
+            </div>
+
+            <div class="mt-2">
+                <div class="form-group">
+                    <textarea id="message" class="form-control" placeholder="Type Your Message.."></textarea>
+                    <button id="btnSendMsg" class="btn btn-success mt-1">Send</button>
+                </div>
+            </div>
+
+        }
+        else
+        {
+            <div class="bg-danger text-white text-center py-3">You dont't have ticket by this number...</div>
+        }
+
+
+    </div>*@
+
+
+@*<div class="msgBox darker">
+        <p>Hey! I'm fine. Thanks for asking!</p>
+        <span class="time-left">11:01</span>
+    </div>*@

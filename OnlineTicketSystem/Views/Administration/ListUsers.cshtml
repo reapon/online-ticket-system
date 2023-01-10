@@ -1,0 +1,64 @@
+﻿@using OnlineTicketSystem.ViewModels
+@model IEnumerable<EditUserViewModel>
+
+@{
+    ViewBag.Title = "All Users";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+}
+
+<link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.25/css/jquery.dataTables.css">
+
+<div class="container">
+    <div class="pt-2">
+        <h2 class="badge bg-dark">All User Roles</h2>
+    </div>
+    <table id="myTable" class="table table-bordered table-striped table-hover">
+        <thead>
+            <tr>
+                <td>User Name</td>
+                <td>User Email</td>
+                <td>User Roles</td>
+                <td>Action</td>
+
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var user in Model)
+            {
+                <tr>
+                    <td>@user.UserName</td>
+                    <td>@user.Email</td>
+                    <td>
+                        @foreach (var role in user.Roles)
+                        {
+
+                            <span class="badge badge-pill bg-primary">@role </span>
+                        }
+
+
+                    </td>
+                    <td>
+                        <a asp-action="EditUser" asp-controller="Administration"
+                           asp-route-id="@user.Id" class="btn btn-success btn-sm">Manage Role</a>
+                    </td>
+
+                </tr>
+            }
+        </tbody>
+    </table>
+
+</div>
+
+@section Scripts{
+    <script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/1.10.25/js/jquery.dataTables.js"></script>
+
+    <script>
+        $(document).ready(function () {
+            $('#myTable').DataTable();
+
+            
+        });
+
+    </script>
+
+}

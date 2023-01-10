@@ -1,0 +1,94 @@
+﻿@{
+    ViewData["Title"] = "Home Page";
+}
+
+<link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/css/select2.min.css" rel="stylesheet" />
+<style>
+    @@import url('https://fonts.googleapis.com/css2?family=Roboto+Condensed&display=swap');
+    body {
+        font-family: 'Roboto Condensed', sans-serif;
+    }
+
+    .header {
+        font-weight: bold;
+        font-size: 40px;
+        margin-top: 8rem;
+        word-spacing: 3px;
+        letter-spacing: 1px;
+        color: #6C63FF;
+    }
+
+    .paragraph{
+        font-weight:500;
+    }
+    
+
+</style>
+
+<div class="row">
+    <div class="col-md-4 landing-text">
+        <h2 class="header">Help Desk <br />Support System</h2>
+        <p class="paragraph mt-4">Welcome to Our Help Desk Ticket System. From here you will get all the support from us via Online. Our Motive is to support you guys Consistently and more Precisely. Feel free to contact us with any of your queries.</p>
+       
+    </div>
+    <div class="col-md-8">
+        <img class="landing-img img-fluid" src="~/images/undraw_in_sync_re_jlqd.svg" alt="Support Image" />
+        
+    </div>
+</div>
+
+@*<div>
+    <select id="group" class="form-control statesSelect" name="states" multiple asp-items="@ViewBag.CategoryID">
+        <option value="">--Select Support Category--</option>
+    </select>
+
+    <button class="btn btn-success" id="btnSubmit">Submit</button>
+
+
+  
+
+</div>
+
+@section Scripts{
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/js/select2.min.js"></script>
+
+    <script>
+        $(document).ready(function () {
+            $(".statesSelect").select2({
+                placeholder: "Select Support Category", //placeholder
+                tags: true
+            });
+
+            $("#btnSubmit").click(function () {
+                var selectedValues = [];
+                $("#group :selected").each(function () {
+                    selectedValues.push($(this).val());
+                });
+                alert(selectedValues);
+                //console.log(selectedValues);
+                 $.ajax({
+                        url: '@Url.Action("CategoryTest", "Home")',
+                        method: "POST",
+                        dataType: "json",
+                        data: {
+                            category: selectedValues,                            
+                },
+                    success: function (data) {                        
+                        location.reload(true);
+                        console.log(data);
+                    },
+                    error: function (err) {
+                        console.log(err);
+                    }
+        })
+
+            });
+
+        });
+
+
+
+
+    </script>
+
+}*@

@@ -1,0 +1,82 @@
+﻿@model OnlineTicketSystem.Models.UserMail
+
+
+@{
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+
+
+    //ViewData["Title"] = "Create";
+    if (Model.ID > 0)
+    {
+        ViewData["Title"] = "Edit";
+
+    }
+    else
+    {
+        ViewData["Title"] = "Create";
+
+    }
+}
+
+<div class="container mt-5">
+    <div class="row">
+        <div class="col-md-4">
+            <form asp-action="UserMailAddOrEdit">
+                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                <input type="hidden" asp-for="ID" />
+                <input type="hidden" asp-for="ComID"  value="@ViewBag.ComId" />
+
+                <div class="form-group">
+                    <label asp-for="ClientUser" class="control-label"></label>
+                    @*<input asp-for="ClientUser" class="form-control" />*@
+                    <select id="group" asp-for="ClientUser" class="form-control" asp-items="@ViewBag.User">
+                        <option value="">--Select Client--</option>
+                    </select>
+
+                    <span asp-validation-for="ClientUser" class="text-danger"></span>
+                </div>
+
+
+
+
+                <div class="form-group">
+                    <label asp-for="TicketMailList" class="control-label"></label>
+                    <input asp-for="TicketMailList" class="form-control" />
+                    <span asp-validation-for="TicketMailList" class="text-danger"></span>
+                </div>
+
+                <div class="form-group">
+                    <label asp-for="SupportMailList" class="control-label"></label>
+                    <input asp-for="SupportMailList" class="form-control" />
+                    <span asp-validation-for="SupportMailList" class="text-danger"></span>
+                </div>
+
+
+
+                @if (Model.ID > 0)
+                {
+                    <br />
+                    <div class="form-group">
+                        <input type="submit" value="Update" class="btn btn-warning btn-sm text-white" />
+                        <a class="btn btn-sm btn-info text-white" asp-action="UserMailList">Back to List</a>
+
+                    </div>
+                }
+                else
+                {
+                    <br />
+                    <div class="form-group">
+                        <input type="submit" value="Create" class="btn btn-primary" />
+                        <a class="btn btn-sm btn-info text-white" asp-action="UserMailList">Back to List</a>
+
+                    </div>
+                }
+
+            </form>
+        </div>
+    </div>
+
+
+</div>
+
+
